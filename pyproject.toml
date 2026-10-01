@@ -1,0 +1,25 @@
+[project]
+name = "csv-stats"
+version = "0.1.0"
+description = "Quick CSV file analyzer showing column statistics"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+csv-stats = "csv_stats:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["csv_stats"]
+omit = ["*/csv_stats/__main__.py"]
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
