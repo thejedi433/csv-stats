@@ -36,12 +36,22 @@ def analyze_column(values: List[str]) -> Dict[str, Any]:
     
     # Otherwise categorical
     non_null = [v for v in values if v.strip() != ""]
+    
+    # Find most common value (deterministic: alphabetically first if tied)
+    top_value = None
+    if non_null:
+        unique_values = set(non_null)
+        max_count = max(non_null.count(v) for v in unique_values)
+        # Get all values with max count, then sort alphabetically for determinism
+        candidates = [v for v in unique_values if non_null.count(v) == max_count]
+        top_value = sorted(candidates)[0]
+    
     return {
         "type": "categorical",
         "count": total,
         "nulls": nulls,
         "unique": len(set(non_null)),
-        "top": max(set(non_null), key=non_null.count) if non_null else None,
+        "top": top_value,
     }
 
 
@@ -94,7 +104,7 @@ def format_output(results: Dict[str, Dict[str, Any]], json_output: bool = False)
     return "\n".join(lines)
 
 
-def main(argv: List[str] = None) -> int:
+def main(argv: List[str] | None = None) -> int:
     """Main entry point."""
     parser = argparse.ArgumentParser(description="Quick CSV file analyzer")
     parser.add_argument("file", type=Path, help="CSV file to analyze")

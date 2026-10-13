@@ -42,6 +42,16 @@ class TestAnalyzeColumn:
         assert result["count"] == 5
         assert result["nulls"] == 0
         assert result["unique"] == 3
+        # apple and banana both appear twice (tie), alphabetically first wins
+        assert result["top"] == "apple"
+
+    def test_categorical_tie_breaking(self):
+        """Test that ties are broken alphabetically for deterministic results."""
+        values = ["zebra", "apple", "zebra", "apple", "zebra", "apple"]
+        result = analyze_column(values)
+        assert result["type"] == "categorical"
+        assert result["unique"] == 2
+        # Both appear 3 times (tie), alphabetically first (apple) should win
         assert result["top"] == "apple"
 
     def test_categorical_with_nulls(self):
